@@ -32,14 +32,7 @@ struct FEquipmentDatainfo :public FTableRowBase{
 public:
 	FEquipmentDatainfo()
 	{
-		Max_Health = -1;
-		Damage = -1;
-		Defense = -1;
-		Max_Stamina = -1;
-		Regen_Stamina = -1;
-		Critical_Chance = -1;
-		Cooldown = -1;
-		Attack_Delay = -1;
+		Max_HP = 0;
 	}
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
@@ -47,7 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Max_Health;
+	float Max_HP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Max_HP_Percent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Damage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
