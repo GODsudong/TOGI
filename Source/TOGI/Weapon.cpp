@@ -7,10 +7,14 @@
 #include "MyPlayer.h"
 #include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
+
 AWeapon::AWeapon()
 {
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	SkeletalMesh->SetupAttachment(GetRootComponent());
+
+	WeaponState = EWeaponState::EWS_Pickup;
+	WeaponType = EWeaponType::EWT_RWeapon;
 }
 
 
@@ -18,12 +22,12 @@ AWeapon::AWeapon()
 void AWeapon::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Super::OnOverlapBegin(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-	if (OtherActor)
+	if ((WeaponState == EWeaponState::EWS_Pickup)&&OtherActor)
 	{
 		AMyPlayer* Player = Cast<AMyPlayer>(OtherActor);
 		if (Player)
 		{
-			//Equip(Player);
+			Equip(Player);
 			//UE_LOG(LogTemp, Log, TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 			Player->SetActiveoverlappingItem(this);
 
@@ -31,6 +35,7 @@ void AWeapon::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* O
 		}
 	}
 }
+
 
 void AWeapon::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
@@ -41,6 +46,7 @@ void AWeapon::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		if (Player)
 		{
 			Player->SetActiveoverlappingItem(nullptr);
+
 		}
 	}
 
@@ -54,14 +60,27 @@ void AWeapon::Equip(AMyPlayer* Char)
 		SkeletalMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 		SkeletalMesh->SetSimulatePhysics(false);
 
-		const USkeletalMeshSocket* RightHandSoket = Char->GetMesh()->GetSocketByName("hand_lSocket");
-		if (RightHandSoket)
+		const USkeletalMeshSocket* Soket = Char->GetMesh()->GetSocketByName("hand_lSocket");;
+		switch (WeaponType)
 		{
-			UE_LOG(LogTemp, Log, TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-			RightHandSoket->AttachActor(this, Char->GetMesh());
-			bRotate = false;
-			Char->SetquippedWeapon(this);
+		case EWeaponType::EWT_LWeapon:
+			Soket = Char->GetMesh()->GetSocketByName("hand_lSocket");
+			break;
+		case EWeaponType::EWT_RWeapon:
+			Soket = Char->GetMesh()->GetSocketByName("hand_rSocket");
+			break;
+		case EWeaponType::EWT_BackWeapon:
+			Soket = Char->GetMesh()->GetSocketByName("Backpack");
+			break;
 		}
-		if (OnEquipSound) UGameplayStatics::PlaySound2D(this,OnEquipSound);
+		if (Soket)
+		{
+			Soket->AttachActor(this, Char->GetMesh());
+			bRotate = false;
+			Char->SetEquippedWeapon(this);
+			Char->SetActiveoverlappingItem(nullptr);
+		}
+		if (OnEquipSound) UGameplayStatics::PlaySound2D(this, OnEquipSound);
 	}
 }
+

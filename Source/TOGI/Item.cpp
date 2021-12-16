@@ -23,9 +23,11 @@ AItem::AItem()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(GetRootComponent());
+	// Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	IdleParticlesComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("IdleParticleComponent"));
 	IdleParticlesComponent->SetupAttachment(GetRootComponent());
+
 }
 
 // Called when the game starts or when spawned

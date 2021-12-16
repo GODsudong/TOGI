@@ -13,5 +13,24 @@ UCLASS()
 class TOGI_API UMyPlayerAnim : public UAnimInstance
 {
 	GENERATED_BODY()
-	
+
+public:
+
+	virtual void NativeInitializeAnimation() override;
+
+	UFUNCTION(BlueprintCallable, Category = AnimationProperties)
+	void UpdateAnimationProperties();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float PlayerMoveSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool isRun;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool isRoll;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class APawn* Pawn;
+
 };

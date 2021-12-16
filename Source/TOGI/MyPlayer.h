@@ -46,6 +46,20 @@ public:
 	void LMBDown();
 	bool bLMBDown;
 
+
+	UFUNCTION()
+		void Attack();
+	UFUNCTION(BlueprintCallable)
+		void AttackEnd();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Anims")
+		bool bAttacking;
+
+	int ComboCount;
+	float AttackDelay;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Anims")
+		class UAnimMontage* CombatMontage;
+
 	void MoveForward(float value);
 
 	void MoveRight(float value);
@@ -62,6 +76,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Items")
 		class AItem* ActiveOverlappingItem;
 
-	FORCEINLINE void SetquippedWeapon(AWeapon* WeaponToSet) { EquippedWeapon = WeaponToSet;  }
+	FORCEINLINE void SetEquippedWeapon(AWeapon* WeaponToSet) { EquippedWeapon = WeaponToSet;  }
 	FORCEINLINE void SetActiveoverlappingItem(AItem* Item) { ActiveOverlappingItem = Item; }
 };
