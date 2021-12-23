@@ -6,6 +6,16 @@
 #include "GameFramework/Character.h"
 #include "MyPlayer.generated.h"
 
+UENUM()
+enum class EPlayerJob : uint8
+{
+	PJ_KNIGHT UMETA(DisplayName = "Knight"),
+	PJ_ARCHER UMETA(DisplayName = "Archer"),
+	PJ_WIZARD UMETA(DisplayName = "Wizard"),
+	PJ_THIEF UMETA(DisplayName = "Thief"),
+	PJ_BIGSWORD UMETA(DisplayName = "Bigsword")
+};
+
 UCLASS()
 class TOGI_API AMyPlayer : public ACharacter
 {
@@ -14,9 +24,6 @@ class TOGI_API AMyPlayer : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMyPlayer();
-
-
-
 
 	UPROPERTY(visibleAnywhere, BlueprintReadOnly,Category = Camera)
 		class USpringArmComponent* CameraBoom;
@@ -29,8 +36,46 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EPlayerJob PlayerJob;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Status")
+		float MAX_HP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float HP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float MAX_MP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float MP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float DEF;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float ATK;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float MoveSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float AtkDelay;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float shield;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		bool isEquipped;
+
+	void DecrementHealth(float Amount);
+	virtual float TakeDamage(float DamageAmount,struct FDamageEvent const& DamageEvent,class AController* EventInstigator,AActor* DamageCauser) override;
+
+
+	float InterpSpeed;
+	bool bInterpToEnemy;
+	void SetInterpToEnemy(bool Interp);
+
+	UPROPERTY(VisibleAnywhere, BlueprintreadOnly,Category = "Combat")
+	class AEnemyBase* CombatTarget;
+
+	FORCEINLINE void SetCombatTarget(AEnemyBase* Target) { CombatTarget = Target; }
+
+	FRotator GetLookAtRotationYaw(FVector Target);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -78,4 +123,6 @@ public:
 
 	FORCEINLINE void SetEquippedWeapon(AWeapon* WeaponToSet) { EquippedWeapon = WeaponToSet;  }
 	FORCEINLINE void SetActiveoverlappingItem(AItem* Item) { ActiveOverlappingItem = Item; }
+
+	void SelectPlayerJob(EPlayerJob job);
 };

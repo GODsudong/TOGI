@@ -4,9 +4,13 @@
 #include "MyPlayer.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h" 
+#include "Kismet/Gameplaystatics.h"
 #include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "EnemyBase.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -40,6 +44,14 @@ AMyPlayer::AMyPlayer()
 	ComboCount = -1;	
 	AttackDelay = 0.8f;
 	bAttacking = false;
+
+
+	MAX_HP = 10;
+	HP = 10;
+	isEquipped = false;
+
+	InterpSpeed = 15.0f;
+	bInterpToEnemy = false;
 }
 
 // Called when the game starts or when spawned
@@ -53,9 +65,24 @@ void AMyPlayer::BeginPlay()
 void AMyPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UE_LOG(LogTemp, Log, TEXT("%f"),AttackDelay);
-	UE_LOG(LogTemp, Log, TEXT("%d"), ComboCount);
+	// UE_LOG(LogTemp, Log, TEXT("%f"),AttackDelay);
+	// UE_LOG(LogTemp, Log, TEXT("%d"), ComboCount);
 	AttackDelay -= DeltaTime;
+
+	if (bInterpToEnemy && CombatTarget)			//자동 방향 조절
+	{
+		FRotator LookAtYaw = GetLookAtRotationYaw(CombatTarget->GetActorLocation());
+		FRotator interpRotation = FMath::RInterpTo(GetActorRotation(), LookAtYaw, DeltaTime, InterpSpeed);
+
+		SetActorRotation(interpRotation);
+	}
+}
+
+FRotator AMyPlayer::GetLookAtRotationYaw(FVector Target)
+{
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target);
+	FRotator LookAtRotationYaw(0.f, LookAtRotation.Yaw,0.f);
+	return LookAtRotationYaw;
 }
 
 // Called to bind functionality to input
@@ -116,6 +143,7 @@ void AMyPlayer::LookUpAtRate(float Rate)
 
 void AMyPlayer::LMBDown()
 {
+	UE_LOG(LogTemp, Log, TEXT("LMBDOWN"));
 	bLMBDown = true;
 	Attack();
 
@@ -138,39 +166,50 @@ void AMyPlayer::LMBUp()
 
 void AMyPlayer::Attack()
 {
-	if (!bAttacking)
+	UE_LOG(LogTemp, Log, TEXT("ATTACK1"));
+	if (isEquipped)
 	{
-		bAttacking = true;
-
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		if (AnimInstance && CombatMontage)
+		UE_LOG(LogTemp, Log, TEXT("ATTACK2"));
+		if (!bAttacking)
 		{
-			if (AttackDelay >= 0 && ComboCount != 2)
+			UE_LOG(LogTemp, Log, TEXT("ATTACK3"));
+			bAttacking = true;
+			SetInterpToEnemy(true);
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			if (AnimInstance && CombatMontage)
 			{
-			}
-			else
-			{
-				ComboCount = -1;
-			}
-			ComboCount++;
-			AttackDelay = 0.8f;
-			switch (ComboCount)
-			{
-			case 0:
-				AnimInstance->Montage_Play(CombatMontage, 1.0f);
-				AnimInstance->Montage_JumpToSection(FName("Slash_1"), CombatMontage);
-				break;
-			case 1:
-				AnimInstance->Montage_Play(CombatMontage, 1.0f);
-				AnimInstance->Montage_JumpToSection(FName("Slash_2"), CombatMontage);
-				break;
-			case 2:
-				AnimInstance->Montage_Play(CombatMontage, 1.0f);
-				AnimInstance->Montage_JumpToSection(FName("Slash_3"), CombatMontage);
-				break;
+				UE_LOG(LogTemp, Log, TEXT("ATTACK4"));
+				if (AttackDelay >= 0 && ComboCount != 2)
+				{
+				}
+				else
+				{
+					ComboCount = -1;
+				}
+				ComboCount++;
+				AttackDelay = 0.8f;
+				switch (ComboCount)
+				{
+				case 0:
+					AnimInstance->Montage_Play(CombatMontage, 1.0f);
+					AnimInstance->Montage_JumpToSection(FName("Slash_1"), CombatMontage);
+					break;
+				case 1:
+					AnimInstance->Montage_Play(CombatMontage, 1.0f);
+					AnimInstance->Montage_JumpToSection(FName("Slash_2"), CombatMontage);
+					break;
+				case 2:
+					AnimInstance->Montage_Play(CombatMontage, 1.0f);
+					AnimInstance->Montage_JumpToSection(FName("Slash_3"), CombatMontage);
+					break;
 
-			default:
-				break;
+				default:
+					break;
+				}
+			}
+			if (EquippedWeapon->SwingSound)
+			{
+				UGameplayStatics::PlaySound2D(this, EquippedWeapon->SwingSound);
 			}
 		}
 	}
@@ -179,8 +218,26 @@ void AMyPlayer::Attack()
 void AMyPlayer::AttackEnd()
 {
 	bAttacking = false;
+	SetInterpToEnemy(false);
 	if (bLMBDown)
 	{
 		Attack();
 	}
+}
+
+void AMyPlayer::SetInterpToEnemy(bool Interp)
+{
+	bInterpToEnemy = Interp;
+}
+
+void AMyPlayer::DecrementHealth(float Amount)
+{
+	HP -= Amount;
+}
+
+float AMyPlayer::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	DecrementHealth(DamageAmount);
+
+	return DamageAmount;
 }

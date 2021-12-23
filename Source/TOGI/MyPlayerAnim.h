@@ -33,4 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class APawn* Pawn;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class AMyPlayer* player;
+
 };
