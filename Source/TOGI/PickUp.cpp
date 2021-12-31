@@ -19,4 +19,4 @@ void APickUp::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 {
 	Super::OnOverlapEnd(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 	UE_LOG(LogTemp, Warning, TEXT("APickUp::OnOverlapEnd"));
-}	
+}

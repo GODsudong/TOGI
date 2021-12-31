@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "MyPlayer.generated.h"
+
+class UCurveFloat;		//컴파일 시간을 줄이기 위함
 
 UENUM()
 enum class EPlayerJob : uint8
@@ -76,9 +79,22 @@ public:
 	FORCEINLINE void SetCombatTarget(AEnemyBase* Target) { CombatTarget = Target; }
 
 	FRotator GetLookAtRotationYaw(FVector Target);
+
+
+	UFUNCTION()
+		void DashTimeline(float Value);
+	UFUNCTION()
+		void DashFinish();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	FTimeline CurveTimeline;
+
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+		UCurveFloat* CurveFloat;
+
 
 public:	
 	// Called every frame
@@ -100,8 +116,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Anims")
 		bool bAttacking;
 
+
 	int ComboCount;
+
 	float AttackDelay;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Anims")
 		class UAnimMontage* CombatMontage;
 
@@ -112,6 +131,16 @@ public:
 	void TurnAtRate(float Rate);
 
 	void LookUpAtRate(float Rate);
+
+
+
+	bool isDash;
+
+	void Dashing();
+
+	bool canDash();
+	
+	float DashTime;
 
 	FORCEINLINE class USpringArmComponent* GetcameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }

@@ -84,6 +84,8 @@ void AWeapon::Equip(AMyPlayer* Char)
 		SkeletalMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 		SkeletalMesh->SetSimulatePhysics(false);
 
+		CombatCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 		const USkeletalMeshSocket* Soket = Char->GetMesh()->GetSocketByName("hand_lSocket");;
 		switch (WeaponType)
 		{
@@ -143,10 +145,10 @@ void AWeapon::CombatOnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActo
 
 }
 
-void AWeapon::ActivateCollision()
+void AWeapon::ActivateCollision()												// 애니메이션에서 처리
 {
 	CombatCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	//UGameplayStatics::PlaySound2D(this, SwingSound);
+	// UGameplayStatics::PlaySound2D(this, SwingSound);
 }
 
 void AWeapon::DeactivateCollision()
