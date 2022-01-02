@@ -86,6 +86,8 @@ public:
 	UFUNCTION()
 		void DashFinish();
 
+	FVector DirVec;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -132,15 +134,12 @@ public:
 
 	void LookUpAtRate(float Rate);
 
-
+	float MaxMinZoomInOut;
+	void ZoomInOut(float WheelUpDown);
 
 	bool isDash;
 
 	void Dashing();
-
-	bool canDash();
-	
-	float DashTime;
 
 	FORCEINLINE class USpringArmComponent* GetcameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }

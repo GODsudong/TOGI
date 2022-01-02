@@ -45,6 +45,7 @@ AMyPlayer::AMyPlayer()
 	AttackDelay = 0.8f;
 	bAttacking = false;
 
+	DirVec = FVector(0, 0, 0);
 
 	MAX_HP = 10;
 	HP = 10;
@@ -75,12 +76,12 @@ void AMyPlayer::BeginPlay()
 
 void AMyPlayer::DashFinish()
 {
-
+	isDash = false;
 }
 
 void AMyPlayer::DashTimeline(float Value)
 {
-	AddActorLocalOffset(FVector(Value*10, 0, 0));
+	AddActorLocalOffset(DirVec*Value*10);
 	UE_LOG(LogTemp, Log, TEXT("AMyPlayer::DashTimeline SpeedValue : %f"),Value);
 }
 
@@ -98,12 +99,7 @@ void AMyPlayer::Tick(float DeltaTime)
 	{
 		FRotator LookAtYaw = GetLookAtRotationYaw(CombatTarget->GetActorLocation());
 		FRotator interpRotation = FMath::RInterpTo(GetActorRotation(), LookAtYaw, DeltaTime, InterpSpeed);
-
 		SetActorRotation(interpRotation);
-	}
-	if (isDash && DashTime >= 0)
-	{
-		// AddActorLocalOffset(FVector(10, 1, 0));		//대수 테스트용
 	}
 }
 
@@ -134,6 +130,8 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &AMyPlayer::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AMyPlayer::LookUpAtRate);
+
+	PlayerInputComponent->BindAxis("ZoomIO", this, &AMyPlayer::ZoomInOut);
 
 }
 
@@ -189,6 +187,25 @@ void AMyPlayer::LMBDown()
 	//}
 }
 
+void AMyPlayer::ZoomInOut(float WheelUpDown)
+{
+	if (0 < -(WheelUpDown))
+	{
+		if (CameraBoom->TargetArmLength < 600.f)
+		{
+			CameraBoom->TargetArmLength += -(WheelUpDown) * 10;
+		}
+	}
+	else
+	{
+		if (200.f < CameraBoom->TargetArmLength)
+		{
+			CameraBoom->TargetArmLength += -(WheelUpDown) * 10;
+		}
+	}
+}
+
+
 void AMyPlayer::LMBUp()
 {
 	bLMBDown = false;	
@@ -196,10 +213,12 @@ void AMyPlayer::LMBUp()
 
 void AMyPlayer::Attack()
 {
+	UE_LOG(LogTemp, Log, TEXT("Attack"), ComboCount);
 	if (isEquipped)
 	{
 		if (!bAttacking)
 		{
+			UE_LOG(LogTemp, Log, TEXT("bAttacking = false"), ComboCount);
 			bAttacking = true;
 			SetInterpToEnemy(true);
 			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -218,14 +237,17 @@ void AMyPlayer::Attack()
 				switch (ComboCount)
 				{
 				case 0:
+					UE_LOG(LogTemp, Log, TEXT("Combo1"));
 					AnimInstance->Montage_Play(CombatMontage, 1.0f);
 					AnimInstance->Montage_JumpToSection(FName("Slash_1"), CombatMontage);
 					break;
 				case 1:
+					UE_LOG(LogTemp, Log, TEXT("Combo2"));
 					AnimInstance->Montage_Play(CombatMontage, 1.0f);
 					AnimInstance->Montage_JumpToSection(FName("Slash_2"), CombatMontage);
 					break;
 				case 2:
+					UE_LOG(LogTemp, Log, TEXT("Combo3"));
 					AnimInstance->Montage_Play(CombatMontage, 1.0f);
 					AnimInstance->Montage_JumpToSection(FName("Slash_3"), CombatMontage);
 					break;
@@ -244,6 +266,7 @@ void AMyPlayer::Attack()
 
 void AMyPlayer::AttackEnd()
 {
+	UE_LOG(LogTemp, Log, TEXT("AttackEnd = %d"), ComboCount);
 	bAttacking = false;
 	SetInterpToEnemy(false);
 	if (bLMBDown)
@@ -272,43 +295,18 @@ float AMyPlayer::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 }
 
 
-bool AMyPlayer::canDash()
-{
-	if (isDash)
-	{
-		if (GetVelocity() == FVector(0, 0, 0))
-		{
-			isDash = false;
-			return false;
-		}
-	}
-	else
-	{
-		return true;
-	}
-	return true;
-}
-
-
-
 void AMyPlayer::Dashing() 
 {
-	if (canDash())
+	if (!(isDash))
 	{
 		UE_LOG(LogTemp, Log, TEXT("DASH"));
 		isDash = true;
+		DirVec = FVector(0, 0, 0);
+		DirVec.Y = GetInputAxisValue(FName("MoveRight"));
+		DirVec.X = GetInputAxisValue(FName("MoveForward"));
+		DirVec.Normalize();
 		CurveTimeline.PlayFromStart();
-		FVector myPlayerinput = FVector(0, 0, 0);
-		myPlayerinput.Y = GetInputAxisValue(FName("MoveRight"));
-		myPlayerinput.X = GetInputAxisValue(FName("MoveForward"));
-
-		myPlayerinput.Normalize();
-		FRotator playerRot = GetActorRotation();
-		FVector result = FRotator(playerRot).RotateVector(myPlayerinput);
-
 		//LaunchCharacter(result * 5000, true, false);
-		UE_LOG(LogTemp, Log, TEXT("%s"), *result.ToString());
-		UE_LOG(LogTemp, Log, TEXT("%s"), *myPlayerinput.ToString());
-		UE_LOG(LogTemp, Log, TEXT("%f"), playerRot.Yaw);
+		UE_LOG(LogTemp, Log, TEXT("%s"), *DirVec.ToString());
 	}
 }
