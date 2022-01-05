@@ -53,6 +53,11 @@ AMyPlayer::AMyPlayer()
 
 	InterpSpeed = 15.0f;
 	bInterpToEnemy = false;
+
+	SpeedMagnification = 1.f;
+	WKeyInputDelay = 0.f;
+	isRun = false;
+
 }
 
 // Called when the game starts or when spawned
@@ -91,6 +96,7 @@ void AMyPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	CurveTimeline.TickTimeline(DeltaTime);
 	AttackDelay -= DeltaTime;
+	WKeyInputDelay -= DeltaTime;
 	// UE_LOG(LogTemp, Log, TEXT("%f"),AttackDelay);
 	// UE_LOG(LogTemp, Log, TEXT("%d"), ComboCount);
 
@@ -103,7 +109,24 @@ void AMyPlayer::Tick(float DeltaTime)
 	}
 }
 
+void AMyPlayer::WKeyDown()
+{
+	UE_LOG(LogTemp, Log, TEXT("WKeyDown"));
+	if (WKeyInputDelay >= 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Run"));
+		isRun = true;
+		SpeedMagnification = 20.f;
+	}
+	WKeyInputDelay = 0.2f;
+}
 
+void AMyPlayer::WKeyUp()
+{
+	UE_LOG(LogTemp, Log, TEXT("WKeyUp"));
+	isRun = false;
+	SpeedMagnification = 1.f;
+}
 
 FRotator AMyPlayer::GetLookAtRotationYaw(FVector Target)
 {
@@ -126,13 +149,15 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &AMyPlayer::Dashing);
 
+	PlayerInputComponent->BindAction("WKey", IE_Pressed, this, &AMyPlayer::WKeyDown);
+	PlayerInputComponent->BindAction("WKey", IE_Released, this, &AMyPlayer::WKeyUp);
+
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &AMyPlayer::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AMyPlayer::LookUpAtRate);
 
 	PlayerInputComponent->BindAxis("ZoomIO", this, &AMyPlayer::ZoomInOut);
-
 }
 
 void AMyPlayer::MoveForward(float value)
@@ -143,7 +168,14 @@ void AMyPlayer::MoveForward(float value)
 		const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, value);
+		if (isRun)
+		{
+			AddActorLocalOffset(Direction * value * SpeedMagnification);
+		}
+		else
+		{
+			AddMovementInput(Direction * SpeedMagnification, value);
+		}
 	}
 }
 
@@ -186,6 +218,8 @@ void AMyPlayer::LMBDown()
 	//	}
 	//}
 }
+
+
 
 void AMyPlayer::ZoomInOut(float WheelUpDown)
 {

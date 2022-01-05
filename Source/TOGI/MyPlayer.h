@@ -153,4 +153,12 @@ public:
 	FORCEINLINE void SetActiveoverlappingItem(AItem* Item) { ActiveOverlappingItem = Item; }
 
 	void SelectPlayerJob(EPlayerJob job);
+
+	void WKeyUp();
+	void WKeyDown();
+
+
+	bool isRun;
+	float WKeyInputDelay;
+	float SpeedMagnification;
 };
