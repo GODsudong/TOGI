@@ -2,11 +2,11 @@
 
 #pragma once
 
+#include "MydataStruct.h" 
+#include "SD_InventoryManagerComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
-
-
 
 /**
  *
@@ -23,6 +23,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		UUserWidget* HUDOverlay;
 
+	FStatusPoint Status;
+
+
+
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	void UpdatePlayerStatus();
+
 };

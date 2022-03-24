@@ -97,6 +97,10 @@ void AMyPlayer::Tick(float DeltaTime)
 	CurveTimeline.TickTimeline(DeltaTime);
 	AttackDelay -= DeltaTime;
 	WKeyInputDelay -= DeltaTime;
+	if (10<Vital)
+	{
+		Vital += DeltaTime;
+	}
 	// UE_LOG(LogTemp, Log, TEXT("%f"),AttackDelay);
 	// UE_LOG(LogTemp, Log, TEXT("%d"), ComboCount);
 

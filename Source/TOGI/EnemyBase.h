@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "EnemyBase.generated.h"
-
+	
 UENUM(BlueprintType)
 enum class EEnemyMovementStatus :uint8
 {

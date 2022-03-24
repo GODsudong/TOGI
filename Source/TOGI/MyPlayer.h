@@ -52,6 +52,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
 		float MP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float MAX_Vital;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+		float Vital;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
 		float DEF;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
 		float ATK;
@@ -159,6 +163,8 @@ public:
 
 
 	bool isRun;
+
 	float WKeyInputDelay;
+
 	float SpeedMagnification;
 };

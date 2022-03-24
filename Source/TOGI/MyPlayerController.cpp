@@ -15,3 +15,8 @@ void AMyPlayerController::BeginPlay()
 	HUDOverlay->AddToViewport();
 	HUDOverlay->SetVisibility(ESlateVisibility::Visible);
 }
+
+void AMyPlayerController::UpdatePlayerStatus()
+{
+	Status.MaxHp = 5;
+}
