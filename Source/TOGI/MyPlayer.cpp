@@ -57,7 +57,6 @@ AMyPlayer::AMyPlayer()
 	SpeedMagnification = 1.f;
 	WKeyInputDelay = 0.f;
 	isRun = false;
-
 }
 
 // Called when the game starts or when spawned
