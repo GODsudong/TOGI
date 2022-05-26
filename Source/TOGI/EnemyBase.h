@@ -15,7 +15,6 @@ enum class EEnemyMovementStatus :uint8
 	EMS_MoveToTarget	UMETA(DisPlayName = "MoveToTarget"),
 	EMS_Attacking		UMETA(DisplayName = "Attacking"),
 	EMS_Dead			UMETA(DisPlayName = "Dead"),
-
 	EMS_MAX				UMETA(DisplayName = "DefeaultMAX")
 
 };
@@ -35,12 +34,6 @@ public:
 
 	FORCEINLINE void SetEnemyMovementStatus(EEnemyMovementStatus status) { Enemymovemonetstatus = status; }
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	//	class USphereComponent* AgroSphere;
-	
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	//	USphereComponent* CombatSphere;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 		class AAIController* AIController;
 
@@ -49,67 +42,32 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 		class USoundCue* HitSound;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	//	class SphereComponent AgroSphere;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-		float MaxHp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-		float Hp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-		float Damage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-		TSubclassOf<UDamageType> DamageTypeClass;
 
 	UFUNCTION(BlueprintCallable)
 		void OnAttackMontageEnded();
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	//virtual void PostInitializeComponents() override;
-
 	UFUNCTION(BlueprintCallable)
 	void Attack();
+
 	FOnAttackEndDelegate OnAttackEnd;
+
+	void EnemyDead();
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+		class UWidgetComponent* HPBarWidget;
 
 protected: 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Status")
+	float HP;
+
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-	/*BehaviorTree 적용 이전의 AI 추적 코드입니다 이후 충돌 처리는 behaviorTree를 활용해서 처리하게됩니다 20220509 */
-
-	//UFUNCTION()
-	//virtual void AgroSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	//UFUNCTION()
-	//virtual void AgroSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	//UFUNCTION()
-	//virtual void CombatSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	//UFUNCTION()
-	//virtual void CombatSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	//UFUNCTION(BlueprintCallable)
-	//void MoveToTarget(class AMyPlayer* Target);
-
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category = "A")
-	bool bOverlappingCombatSphere;
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "A")
-	//	AMyPlayer* CombatTarget;
-
-	FTimerHandle AttackTimer;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Combat")
-	float AttackMaxTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-	float AttackMinTime;
-
 	bool IsAttacking;
 
-	void EnemyDead();
 };

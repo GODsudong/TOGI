@@ -29,6 +29,9 @@ ABTAIController::ABTAIController()
 void ABTAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+	// UBehaviorTreeComponent* BehaviorTreeComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
+	// FVector Hompos = InPawn->GetTransform().TransformPosition(Hompos);;
+	// BehaviorTreeComponent->GetBlackboardComponent()->SetValueAsVector(ABTAIController::HomePosKey,Hompos);
 	RunAI();
 }
 

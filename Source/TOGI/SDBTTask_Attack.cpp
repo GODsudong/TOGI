@@ -15,19 +15,19 @@ USDBTTask_Attack::USDBTTask_Attack()
 // 3가지 값을 리턴한다 InProgress 대기, Failed 실패, Succeeded 성공
 EBTNodeResult::Type USDBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	UE_LOG(LogTemp, Log, TEXT("1111111111"));
+	//UE_LOG(LogTemp, Log, TEXT("1111111111"));
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	auto EnemyBase = Cast<AEnemyBase>(OwnerComp.GetAIOwner()->GetPawn());
 	if (nullptr == EnemyBase)
 		return EBTNodeResult::Failed;
 
-	UE_LOG(LogTemp, Log, TEXT("22222222222"));
+	//UE_LOG(LogTemp, Log, TEXT("22222222222"));
 
 	EnemyBase->OnAttackEnd.AddLambda([this]()->void {
-		UE_LOG(LogTemp, Log, TEXT("333333333"));
+		//UE_LOG(LogTemp, Log, TEXT("333333333"));
 		IsAttacking = false;
-		UE_LOG(LogTemp, Log, TEXT("ISAttacking :: %s"), this->IsAttacking ? TEXT("true") : TEXT("false"));
+		//UE_LOG(LogTemp, Log, TEXT("ISAttacking :: %s"), this->IsAttacking ? TEXT("true") : TEXT("false"));
 		});
 
 	EnemyBase->Attack();

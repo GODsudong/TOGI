@@ -69,10 +69,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 };
-
 USTRUCT(BlueprintType)
 struct FItemDatainfo :public FTableRowBase {
 	GENERATED_BODY()
+		// 아이템에 대한 모든 정보 구조체
 public:
 	FItemDatainfo()
 	{
@@ -134,11 +134,11 @@ public:
 		float Attack_Delay;
 
 };
-
 USTRUCT(BlueprintType)
 struct FItemInformation
 {
 	GENERATED_BODY()
+		// 인벤토리에 저장된 아이템 정보 구조체
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FName ID;
@@ -154,11 +154,11 @@ public:
 		int32 Amount;
 
 };
-
 USTRUCT(BlueprintType)
 struct FItems
 {
 	GENERATED_BODY()
+		// 드래그된 아이템에 대한 정보 구초제
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -167,11 +167,11 @@ public:
 		int32 Amount;
 
 };
-
 USTRUCT(BlueprintType)
 struct FStatusPoint
 {
 	GENERATED_BODY()
+		// 플레이어 스탯에 관한 정보 구조체
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -196,11 +196,11 @@ public:
 		float AttackDelay;
 
 };
-
 USTRUCT(BlueprintType)
 struct FTooltipInfo
 {
 	GENERATED_BODY()
+		// 아이템 툴팁에 대한 정보 구조체
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

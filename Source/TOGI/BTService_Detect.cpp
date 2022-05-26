@@ -24,7 +24,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	if (nullptr == ControllingPawn) return;
 
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 600.0f;
+	float DetectRadius = 1500.0f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionQueryParam(NAME_None, false, ControllingPawn);
@@ -39,11 +39,13 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	if (bResult)
 	{
+		bool targetOn = false;
 		for (FOverlapResult OverlapResult : OverlapResults)
 		{
 			AMyPlayer* Player = Cast<AMyPlayer>(OverlapResult.GetActor());
 			if (Player && Player->GetController()->IsPlayerController())
 			{
+				targetOn = true;
 				// Character면, 블랙보드에 저장한다.
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(ABTAIController::TargetKey, Player);
 
@@ -54,9 +56,15 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 				return;
 			}
 		}
+		if (!targetOn)
+		{
+			// 임시용 바닥 콜리전 처리 하면 삭제 요망 targetOn 포함
+			OwnerComp.GetBlackboardComponent()->SetValueAsObject(ABTAIController::TargetKey, nullptr);
+		}
 	}
 	else
 	{
+		UE_LOG(LogTemp, Log, TEXT("bResult false"));
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ABTAIController::TargetKey, nullptr);
 	}
 

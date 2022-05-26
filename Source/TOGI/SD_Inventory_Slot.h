@@ -19,11 +19,11 @@ protected:
 
 
 	UPROPERTY(Meta = (BindWidget))
-		class UCanvasPanel* CanvasPanel;
+		class UCanvasPanel* SlotCanvasPanel;
 	UPROPERTY(Meta = (BindWidget))
-		class USizeBox* SizeBox;
+		class USizeBox* SlotSizeBox;
 	UPROPERTY(Meta = (BindWidget))
-		class UOverlay* Overlay;
+		class UOverlay* SlotOverlay;
 	UPROPERTY(Meta = (BindWidget))
 		class UBorder* SlotBorder;
 	UPROPERTY(Meta = (BindWidget))

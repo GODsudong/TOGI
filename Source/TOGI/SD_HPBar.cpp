@@ -1,20 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "MyPlayer.h"
-#include "InventoryWidget.h"
 
-void UInventoryWidget::NativeConstruct()
+#include "MyPlayer.h"
+#include "SD_HPBar.h"
+
+void USD_HPBar::NativeConstruct()
 {
 	Super::NativeConstruct();
 }
 
-
-void UInventoryWidget::GetText()
+float USD_HPBar::GetText()
 {
-
+	return 0;
 }
 
-float UInventoryWidget::GetPercent()
+float USD_HPBar::GetPercent()
 {
 	if (PlayerReference)
 	{
@@ -29,6 +29,3 @@ float UInventoryWidget::GetPercent()
 	return 0;
 
 }
-
-
-
