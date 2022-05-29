@@ -2,7 +2,8 @@
 
 
 #include "SD_InventoryComponent.h"
-
+#include "Components/WidgetComponent.h"
+#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 // Sets default values for this component's properties
 USD_InventoryComponent::USD_InventoryComponent()
 {
@@ -10,6 +11,7 @@ USD_InventoryComponent::USD_InventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	//InventoryWidget = ConstructorHelpersInternal::FindOrLoadObject<UUserWidget>("/Game/NEW0524UI/UI_Window/InventoryEquiment_Window.InventoryEquiment_Window_C");
 	// ...
 }
 
@@ -132,4 +134,10 @@ void USD_InventoryComponent::ClearInventoryItem(int SlotCount)
 	InventoryData[SlotCount] = InitinventoryData;
 }
 
+void USD_InventoryComponent::OpenInventory()
+{
+	//if (InventoryWidget)
+	//{
+	//	}
 
+}

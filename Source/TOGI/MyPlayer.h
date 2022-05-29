@@ -91,6 +91,10 @@ public:
 		void DashFinish();
 
 	FVector DirVec;
+	
+	//UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Widget")
+	//class ASD_InventoryComponent* myInventoryComponent;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -144,6 +148,8 @@ public:
 	bool isDash;
 
 	void Dashing();
+
+	void TabKeyDown();
 
 	FORCEINLINE class USpringArmComponent* GetcameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }

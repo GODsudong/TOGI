@@ -22,8 +22,17 @@ public:
 
 
 	TArray<FItemDatainfo> ItemData;				// 모든 아이템의 데이터 정보
+
 	TArray<FItemDatainfo> InventoryData;		// 인벤토리 데이터 정보
+
 	FItemDatainfo InitinventoryData;			// 인벤토리 초기화에 사용될 구조체 정보
+
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	//	UUserWidget* InventoryWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+		float Data;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -31,6 +40,7 @@ protected:
 public:
 	// Called every frame
 
+	
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	UFUNCTION()
@@ -53,4 +63,8 @@ public:
 	void InitInventory(int InventorySize);
 	UFUNCTION()
 	void ClearInventoryItem(int SlotCount);
+
+	UFUNCTION()
+		void OpenInventory();
+
 };

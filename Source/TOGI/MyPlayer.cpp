@@ -11,6 +11,7 @@
 #include "Sound/SoundCue.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "EnemyBase.h"
+#include "SD_InventoryComponent.h"
 
 // Sets default values
 AMyPlayer::AMyPlayer()
@@ -26,8 +27,8 @@ AMyPlayer::AMyPlayer()
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-
 	FollowCamera->bUsePawnControlRotation = false;
+
 
 	BaseTurnRate = 65.f;
 	BaseLookUpRate = 65.f;
@@ -40,6 +41,8 @@ AMyPlayer::AMyPlayer()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 650.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	// myInventoryComponent = CreateDefaultSubobject<ASD_InventoryComponent>(TEXT("InventoryComponent"));
 
 	ComboCount = -1;	
 	AttackDelay = 0.8f;
@@ -57,6 +60,8 @@ AMyPlayer::AMyPlayer()
 	SpeedMagnification = 1.f;
 	WKeyInputDelay = 0.f;
 	isRun = false;
+
+
 }
 
 // Called when the game starts or when spawned
@@ -154,6 +159,8 @@ void AMyPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("WKey", IE_Pressed, this, &AMyPlayer::WKeyDown);
 	PlayerInputComponent->BindAction("WKey", IE_Released, this, &AMyPlayer::WKeyUp);
+
+	PlayerInputComponent->BindAction("Tab", IE_Pressed, this, &AMyPlayer::TabKeyDown);
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
@@ -346,4 +353,12 @@ void AMyPlayer::Dashing()
 		//LaunchCharacter(result * 5000, true, false);
 		UE_LOG(LogTemp, Log, TEXT("%s"), *DirVec.ToString());
 	}
+}
+
+
+void AMyPlayer::TabKeyDown()
+{
+	//if (InventoryComponent)
+	//{
+	//}
 }
